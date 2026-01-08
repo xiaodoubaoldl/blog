@@ -1,0 +1,89 @@
+/* 全局样式 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 自定义样式 */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased;
+  }
+}
+
+/* 代码高亮样式覆盖 */
+.hljs {
+  @apply bg-gray-900 text-gray-100;
+}
+
+/* 暗黑模式下的代码高亮 */
+.dark .hljs {
+  @apply bg-gray-900 text-gray-100;
+}
+
+/* 图片懒加载占位 */
+img {
+  @apply transition-opacity duration-300;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* 文本选择样式 */
+::selection {
+  @apply bg-primary-200 dark:bg-primary-800 text-primary-900 dark:text-primary-100;
+}
+
+/* 链接样式 */
+a {
+  @apply transition-colors duration-200;
+}
+
+/* 响应式图片容器 */
+.image-container {
+  @apply relative w-full overflow-hidden rounded-lg;
+}
+
+/* 文章内容样式增强 */
+.prose {
+  @apply text-gray-800 dark:text-gray-200;
+}
+
+.prose p {
+  @apply mb-4 leading-relaxed;
+}
+
+.prose strong {
+  @apply font-semibold text-gray-900 dark:text-white;
+}
+
+.prose em {
+  @apply italic;
+}
+
+.prose hr {
+  @apply my-8 border-gray-300 dark:border-gray-700;
+}
+
+/* Disqus 容器样式 */
+#disqus_thread {
+  @apply mt-8;
+}
