@@ -5,6 +5,14 @@ module.exports = {
     './components/**/*.{js,jsx}',
     './app/**/*.{js,jsx}',
   ],
+  safelist: [
+    'from-blue-500',
+    'to-cyan-500',
+    'from-green-500',
+    'to-emerald-500',
+    'from-purple-500',
+    'to-pink-500',
+  ],
   darkMode: 'class', // 启用基于 class 的暗黑模式
   theme: {
     extend: {
