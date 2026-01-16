@@ -1,4 +1,5 @@
 // Markdown 内容渲染组件
+import { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
@@ -9,33 +10,24 @@ import 'react-photo-view/dist/react-photo-view.css'
 import 'highlight.js/styles/github-dark.css'
 
 export default function MarkdownContent({ content, category = 'tech' }) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   // 自定义图片组件（支持旅游相册预览）
+  // 注意：使用 <span> 而不是 <div>，因为 Markdown 会将图片包裹在 <p> 标签内
   const ImageComponent = ({ src, alt, ...props }) => {
     const imageSrc = src || ''
     const imageAlt = alt || ''
     
-    // 如果是旅游分类，使用图片预览功能
-    if (category === 'travel') {
-      return (
-        <PhotoView src={imageSrc}>
-          <div className="my-4 cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity">
-            <Image
-              src={imageSrc}
-              alt={imageAlt}
-              width={800}
-              height={600}
-              className="w-full h-auto"
-              loading="lazy"
-              unoptimized={imageSrc.startsWith('http')}
-            />
-          </div>
-        </PhotoView>
-      )
-    }
-
-    // 其他分类使用普通图片
-    return (
-      <div className="my-4 rounded-lg overflow-hidden">
+    // 使用 span 包装并设置为 block，避免在 <p> 标签内使用 <div>
+    // 这是有效的 HTML，因为 span 可以作为 p 的子元素
+    const imageElement = (
+      <span 
+        className={`block my-4 rounded-lg overflow-hidden ${category === 'travel' && mounted ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
+        style={{ display: 'block' }}
+      >
         <Image
           src={imageSrc}
           alt={imageAlt}
@@ -45,8 +37,20 @@ export default function MarkdownContent({ content, category = 'tech' }) {
           loading="lazy"
           unoptimized={imageSrc.startsWith('http')}
         />
-      </div>
+      </span>
     )
+    
+    // 如果是旅游分类且已挂载，使用图片预览功能
+    if (category === 'travel' && mounted) {
+      return (
+        <PhotoView src={imageSrc}>
+          {imageElement}
+        </PhotoView>
+      )
+    }
+
+    // 其他情况使用普通图片
+    return imageElement
   }
 
   // 自定义代码块组件
@@ -137,7 +141,8 @@ export default function MarkdownContent({ content, category = 'tech' }) {
     </ReactMarkdown>
   )
 
-  if (category === 'travel') {
+  // 只在客户端挂载后使用 PhotoProvider，避免 hydration 错误
+  if (category === 'travel' && mounted) {
     return (
       <PhotoProvider>
         <div className="prose prose-lg dark:prose-invert max-w-none">

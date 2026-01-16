@@ -1,4 +1,5 @@
 // 文章详情页（动态路由）
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { getAllPostSlugs, getPostData, getAllPosts } from '../../../lib/posts'
@@ -9,6 +10,16 @@ import Link from 'next/link'
 
 export default function PostDetail({ post, prevPost, nextPost }) {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+  const [postUrl, setPostUrl] = useState('')
+
+  // 防止 hydration 错误：只在客户端设置 URL
+  useEffect(() => {
+    setMounted(true)
+    if (typeof window !== 'undefined' && post) {
+      setPostUrl(window.location.href)
+    }
+  }, [post])
 
   if (!post) {
     return (
@@ -21,9 +32,8 @@ export default function PostDetail({ post, prevPost, nextPost }) {
     )
   }
 
-  const postUrl = typeof window !== 'undefined' 
-    ? window.location.href 
-    : `https://your-domain.com${getPostUrl(post.category, post.slug)}`
+  // 使用静态 URL 作为默认值，避免 hydration 错误
+  const defaultPostUrl = post ? `https://your-domain.com${getPostUrl(post.category, post.slug)}` : ''
 
   return (
     <>
@@ -34,7 +44,7 @@ export default function PostDetail({ post, prevPost, nextPost }) {
         <meta property="og:title" content={post.title} />
         <meta property="og:description" content={post.summary || post.title} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={postUrl} />
+        <meta property="og:url" content={mounted ? postUrl : defaultPostUrl} />
         {post.date && <meta property="article:published_time" content={post.date} />}
       </Head>
 
@@ -121,11 +131,11 @@ export default function PostDetail({ post, prevPost, nextPost }) {
         )}
 
         {/* Disqus 评论 */}
-        {process.env.NEXT_PUBLIC_DISQUS_SHORTNAME && (
+        {process.env.NEXT_PUBLIC_DISQUS_SHORTNAME && mounted && (
           <DisqusComments
             identifier={`${post.category}-${post.slug}`}
             title={post.title}
-            url={postUrl}
+            url={postUrl || defaultPostUrl}
           />
         )}
       </article>

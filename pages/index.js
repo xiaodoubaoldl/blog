@@ -1,11 +1,16 @@
-// 首页：炫酷设计，按分类展示文章
+// 首页：参考 krjojo.com 的设计风格
 import Head from 'next/head'
 import Link from 'next/link'
 import { getAllPosts } from '../lib/posts'
 import PostCard from '../components/PostCard'
+import HeroSection from '../components/HeroSection'
+import RecentPosts from '../components/RecentPosts'
+import DailyQuote from '../components/DailyQuote'
+import HistoryToday from '../components/HistoryToday'
+import StatsCard from '../components/StatsCard'
 import { getCategoryName, getCategoryColor } from '../lib/utils'
 
-export default function Home({ techPosts, lifePosts, travelPosts }) {
+export default function Home({ techPosts, lifePosts, travelPosts, allPosts }) {
   // 分类配置
   const categories = [
     {
@@ -37,6 +42,26 @@ export default function Home({ techPosts, lifePosts, travelPosts }) {
     },
   ]
 
+  // 计算统计数据
+  const totalPosts = allPosts.length
+  const totalWords = allPosts.reduce((sum, post) => {
+    return sum + (post.content ? post.content.length : 0)
+  }, 0)
+  
+  // 计算距离上次更新的天数
+  const getDaysSinceUpdate = () => {
+    if (allPosts.length === 0) return 'N/A'
+    const lastPostDate = new Date(allPosts[0].date)
+    const today = new Date()
+    const diffTime = Math.abs(today - lastPostDate)
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    if (diffDays === 0) return '今天'
+    if (diffDays === 1) return '1 天'
+    return `${diffDays} 天`
+  }
+  
+  const lastUpdate = getDaysSinceUpdate()
+
   return (
     <>
       <Head>
@@ -48,48 +73,61 @@ export default function Home({ techPosts, lifePosts, travelPosts }) {
         <meta property="og:type" content="website" />
       </Head>
 
-      <div>
-        {/* 炫酷的 Hero 区域 */}
-        <section className="relative overflow-hidden mb-16">
-          {/* 背景渐变 */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-500 via-purple-500 to-pink-500 opacity-10 dark:opacity-20" />
-          
-          {/* 动态背景装饰 */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-300 dark:bg-primary-700 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-30 animate-blob" />
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 dark:bg-purple-700 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-2000" />
-            <div className="absolute top-40 left-40 w-80 h-80 bg-pink-300 dark:bg-pink-700 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-30 animate-blob animation-delay-4000" />
+      <div className="space-y-12">
+        {/* Hero 区域 - 占满整个视口 */}
+        <section className="mb-0">
+          <HeroSection />
+        </section>
+
+        {/* 主要内容区域 */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* 左侧：最近文章 */}
+          <div className="lg:col-span-2">
+            <RecentPosts posts={allPosts} />
           </div>
 
-          {/* 内容 */}
-          <div className="relative z-10 text-center py-20 md:py-28">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary-600 via-purple-600 to-pink-600 dark:from-primary-400 dark:via-purple-400 dark:to-pink-400 animate-fade-in">
-              欢迎来到我的博客
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto animate-fade-in-delay">
-              分享技术、生活与旅游的点滴
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 animate-fade-in-delay-2">
-              <Link
-                href="/tech"
-                className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                探索技术
-              </Link>
-              <Link
-                href="/about"
-                className="px-6 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700"
-              >
-                关于我
-              </Link>
-            </div>
+          {/* 右侧：每日一言和历史 */}
+          <div className="space-y-6">
+            <DailyQuote />
+            <HistoryToday />
+          </div>
+        </section>
+
+        {/* 统计数据 */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">网站统计</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatsCard
+              label="总文章数"
+              value={totalPosts}
+              subtitle="仅包含博客文章"
+              icon="📝"
+            />
+            <StatsCard
+              label="总字数"
+              value={`${Math.round(totalWords / 1000)}k+`}
+              subtitle="每一个自然月统计一次"
+              icon="📊"
+            />
+            <StatsCard
+              label="距离上次更新"
+              value={lastUpdate}
+              subtitle=""
+              icon="🕐"
+            />
+            <StatsCard
+              label="今日访问"
+              value="0"
+              subtitle=""
+              icon="👁️"
+            />
           </div>
         </section>
 
         {/* 文章分类模块 */}
-        <section className="mb-16">
+        <section>
           <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
-            文章
+            用文章的方式记录生活
           </h2>
 
           {/* 三个分类模块 */}
@@ -163,6 +201,39 @@ export default function Home({ techPosts, lifePosts, travelPosts }) {
             ))}
           </div>
         </section>
+
+        {/* 网站架构介绍 */}
+        <section className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">
+            网站架构
+          </h2>
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
+            漂亮，轻量，简单，灵活，可移植
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="text-4xl mb-4">📝</div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Markdown</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                一种轻量级标记语言，它以简洁的语法使人们能够快速地编写格式化文本。
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl mb-4">⚡</div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Next.js</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                一个用 React 编写的全栈框架，它能够快速地将 Markdown 格式的内容转换成静态 HTML 页面。
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl mb-4">🎨</div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">TailwindCSS</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                一个实用优先的 CSS 框架，它提供了一套工具类，使开发者可以专注于页面的布局和设计。
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
     </>
   )
@@ -182,6 +253,7 @@ export async function getStaticProps() {
       techPosts,
       lifePosts,
       travelPosts,
+      allPosts, // 传递所有文章用于统计和最近文章
     },
   }
 }

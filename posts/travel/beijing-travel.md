@@ -14,13 +14,13 @@ summary: 记录一次北京之旅，探索这座古都的历史文化与现代�
 
 清晨，我来到了天安门广场。这里是中国的象征，也是每个来北京的人必到的地方。
 
-![天安门广场](https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&h=600&fit=crop)
+![天安门广场](https://picsum.photos/seed/tiananme/800/600)
 
 站在广场上，看着庄严的天安门城楼，心中涌起一种特殊的情感。这里见证了太多历史时刻。
 
 随后，我进入了故宫博物院。这座明清两朝的皇宫，是中国古代建筑的杰作。
 
-![故宫](https://images.unsplash.com/photo-1555993531-0c0b0c0c0c0c?w=800&h=600&fit=crop)
+![故宫](https://picsum.photos/seed/forbidden-cit/800/600)
 
 漫步在红墙黄瓦之间，仿佛穿越回了古代。每一座宫殿都有其独特的故事，每一件文物都承载着历史的记忆。
 
@@ -28,25 +28,25 @@ summary: 记录一次北京之旅，探索这座古都的历史文化与现代�
 
 颐和园是中国古典园林之首，被誉为"皇家园林博物馆"。
 
-![颐和园](https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&h=600&fit=crop)
+![颐和园](https://picsum.photos/seed/summer-palac/800/600)
 
 昆明湖的碧波荡漾，万寿山的层峦叠嶂，构成了一幅美丽的画卷。在这里，我感受到了中国园林艺术的精妙。
 
 下午，我参观了圆明园遗址。虽然只剩下断壁残垣，但依然能感受到它曾经的辉煌。
 
-![圆明园](https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop)
+![圆明园](https://picsum.photos/seed/yuanmingyua/800/600)
 
 ## 第三天：长城与胡同
 
 "不到长城非好汉"，我来到了八达岭长城。
 
-![长城](https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&h=600&fit=crop)
+![长城](https://picsum.photos/seed/great-wal/800/600)
 
 站在长城上，俯瞰群山，心中涌起一股豪情。这座伟大的建筑，见证了中华民族的智慧和坚韧。
 
 傍晚，我走进了北京的胡同。这里是老北京的灵魂所在。
 
-![胡同](https://images.unsplash.com/photo-1555993531-0c0b0c0c0c0c?w=800&h=600&fit=crop)
+![胡同](https://picsum.photos/seed/huton/800/600)
 
 狭窄的巷子里，老人们在聊天，孩子们在玩耍，充满了生活气息。我品尝了正宗的北京炸酱面，味道真是棒极了！
 
@@ -54,7 +54,7 @@ summary: 记录一次北京之旅，探索这座古都的历史文化与现代�
 
 最后一天，我参观了鸟巢和水立方，感受了北京的现代风貌。
 
-![鸟巢](https://images.unsplash.com/photo-1555993531-0c0b0c0c0c0c?w=800&h=600&fit=crop)
+![鸟巢](https://picsum.photos/seed/bird-nes/800/600)
 
 这些现代建筑与古都的历史形成了有趣的对比，展现了北京作为国际化大都市的一面。
 
