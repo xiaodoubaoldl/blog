@@ -39,7 +39,7 @@ export default function HeroSection({ isFullScreen = true, scrollProgress = 0 })
 
         {/* 副标题 */}
         <p className="text-xl md:text-2xl lg:text-3xl text-gray-700 dark:text-gray-300 mb-4 font-medium">
-          没有梦想，何必远方1111
+          没有梦想，何必远方
         </p>
 
         {/* 描述文字 */}
