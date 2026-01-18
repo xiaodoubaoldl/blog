@@ -6,6 +6,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # 关键：声明使用Production环境，才能读取该环境下的Secrets
+    environment: Production
     steps:
       # 1. 通过SSH连接服务器，执行部署脚本
       - name: SSH连接服务器并部署
