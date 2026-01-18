@@ -6,10 +6,32 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # 关键：声明使用Production环境，1才能读取该环境下的Secrets
+    # 关键：声明使用Production环境，才能读取该环境下的Secrets
     environment: Production
     steps:
-      # 1. 通过SSH连接服务器，执行部署脚本
+      # 调试步骤：检查必要的Secrets是否存在（不会输出密钥内容）
+      - name: 验证Secrets配置
+        run: |
+          echo "检查Secrets配置..."
+          if [ -z "${{ secrets.SSH_HOST }}" ]; then
+            echo "错误: SSH_HOST 未设置"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SSH_USER }}" ]; then
+            echo "错误: SSH_USER 未设置"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "错误: SSH_PRIVATE_KEY 未设置"
+            exit 1
+          fi
+          if [ -z "${{ secrets.PROJECT_PATH }}" ]; then
+            echo "错误: PROJECT_PATH 未设置"
+            exit 1
+          fi
+          echo "✓ 所有必要的Secrets都已配置"
+
+      # 通过SSH连接服务器，执行部署脚本
       - name: SSH连接服务器并部署
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -17,6 +39,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22 # 服务器SSH端口（默认22）
+          timeout: 30s # 连接超时时间
+          command_timeout: 10m # 命令执行超时时间
           script: |
             # 进入项目目录
             cd ${{ secrets.PROJECT_PATH }}
