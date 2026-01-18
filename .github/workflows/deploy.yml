@@ -1,0 +1,35 @@
+name: 自动部署Next.js到腾讯云轻量服务器
+on:
+  push:
+    branches: [main] # 仅在main分支提交时触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 通过SSH连接服务器，执行部署脚本
+      - name: SSH连接服务器并部署
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22 # 服务器SSH端口（默认22）
+          script: |
+            # 进入项目目录
+            cd ${{ secrets.PROJECT_PATH }}
+            
+            # 拉取最新代码
+            git pull origin main
+            
+            # 安装新依赖（若package.json有变化）
+            pnpm install
+            
+            # 重新构建项目
+            pnpm run build
+            
+            # 重启PM2服务
+            pm2 restart nextjs-project
+            
+            # 输出部署完成日志
+            echo "部署完成！"

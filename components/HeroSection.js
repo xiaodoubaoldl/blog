@@ -1,17 +1,41 @@
 // Hero 区域组件（静态设计，参考 krjojo.com）
 import Link from 'next/link'
 
-export default function HeroSection() {
+export default function HeroSection({ isFullScreen = true, scrollProgress = 0 }) {
+  // 根据滚动进度计算高度和缩放
+  // 平滑地从 100vh 缩小到 50vh
+  const height = isFullScreen 
+    ? `${100 - scrollProgress * 50}vh` 
+    : `${Math.max(50 - scrollProgress * 10, 40)}vh`
+  const scale = isFullScreen ? 1 : Math.max(1 - scrollProgress * 0.15, 0.85)
+  
   return (
-    <div className="relative w-full h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="relative z-10 text-center px-4 py-20 max-w-4xl mx-auto">
+    <div 
+      className="relative w-full flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800"
+      style={{
+        height: height,
+        minHeight: isFullScreen ? '100vh' : '400px',
+        transition: isFullScreen ? 'height 0.1s ease-out' : 'all 0.5s ease-out',
+      }}
+    >
+      <div 
+        className="relative z-10 text-center px-4 py-20 max-w-4xl mx-auto transition-all duration-700 ease-out"
+        style={{
+          transform: `scale(${scale})`,
+          opacity: isFullScreen ? 1 : Math.max(1 - scrollProgress * 0.3, 0.7),
+        }}
+      >
         {/* 主标题 - "个人博客" 其中"博客"使用渐变 */}
-        <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-6 leading-tight">
+        {/* <h1 className={`font-bold mb-6 leading-tight transition-all duration-700 ${
+          isFullScreen 
+            ? 'text-6xl md:text-8xl lg:text-9xl' 
+            : 'text-4xl md:text-6xl lg:text-7xl'
+        }`}>
           <span className="text-gray-900 dark:text-white">个人</span>
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 dark:from-purple-400 dark:via-blue-400 dark:to-purple-400">
             博客
           </span>
-        </h1>
+        </h1> */}
 
         {/* 副标题 */}
         <p className="text-xl md:text-2xl lg:text-3xl text-gray-700 dark:text-gray-300 mb-4 font-medium">

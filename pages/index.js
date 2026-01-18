@@ -1,6 +1,7 @@
 // 首页：参考 krjojo.com 的设计风格
 import Head from 'next/head'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { getAllPosts } from '../lib/posts'
 import PostCard from '../components/PostCard'
 import HeroSection from '../components/HeroSection'
@@ -11,6 +12,28 @@ import StatsCard from '../components/StatsCard'
 import { getCategoryName, getCategoryColor } from '../lib/utils'
 
 export default function Home({ techPosts, lifePosts, travelPosts, allPosts }) {
+  const [scrollY, setScrollY] = useState(0)
+  
+  // 滚动阈值：超过这个值后，HeroSection 开始回到文档流
+  const SCROLL_THRESHOLD = 200
+
+  // 监听滚动事件
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY)
+    }
+
+    // 初始检查
+    handleScroll()
+    
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // 计算 HeroSection 是否应该全屏
+  const isFullScreen = scrollY < SCROLL_THRESHOLD
+  // 计算滚动进度（0-1），用于平滑过渡
+  const scrollProgress = Math.min(scrollY / SCROLL_THRESHOLD, 1)
   // 分类配置
   const categories = [
     {
@@ -74,9 +97,22 @@ export default function Home({ techPosts, lifePosts, travelPosts, allPosts }) {
       </Head>
 
       <div className="space-y-12">
+        
         {/* Hero 区域 - 占满整个视口 */}
-        <section className="mb-0">
-          <HeroSection />
+        <section 
+          className={`${
+            isFullScreen ? 'fixed top-0 left-0 right-0 z-40 m-0' : 'relative mb-0'
+          }`}
+          style={{
+            transform: isFullScreen 
+              ? `translateY(${-scrollY * 0.2}px) scale(${1 - scrollProgress * 0.1})` 
+              : 'translateY(0) scale(1)',
+            opacity: isFullScreen ? 1 : Math.max(1 - scrollProgress * 0.3, 0.7),
+            marginTop: isFullScreen ? '0' : undefined,
+            transition: isFullScreen ? 'transform 0.1s ease-out' : 'all 0.5s ease-out',
+          }}
+        >
+          <HeroSection isFullScreen={isFullScreen} scrollProgress={scrollProgress} />
         </section>
 
         {/* 主要内容区域 */}

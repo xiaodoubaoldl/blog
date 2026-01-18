@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 
 export default function Layout({ children }) {
   const [mounted, setMounted] = useState(false)
-  const [showHeader, setShowHeader] = useState(false)
+  const [scrollY, setScrollY] = useState(0)
   const { theme, setTheme } = useTheme()
   const router = useRouter()
 
@@ -15,31 +15,33 @@ export default function Layout({ children }) {
     setMounted(true)
   }, [])
 
-  // 监听滚动事件，控制header显示（仅在首页）
+  // 监听滚动事件，计算导航栏显示进度（仅在首页）
   useEffect(() => {
     if (!mounted) return
     
     // 如果不是首页，直接显示header
     if (router.pathname !== '/') {
-      setShowHeader(true)
       return
     }
 
     const handleScroll = () => {
-      // 当滚动超过50px时显示header
-      if (window.scrollY > 50) {
-        setShowHeader(true)
-      } else {
-        setShowHeader(false)
-      }
+      setScrollY(window.scrollY)
     }
 
     // 初始检查
     handleScroll()
     
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [mounted, router.pathname])
+
+  // 计算导航栏显示进度（0-1）
+  // 从 100px 开始显示，到 200px 完全显示
+  const NAV_START = 100
+  const NAV_END = 200
+  const navProgress = router.pathname === '/' 
+    ? Math.min(Math.max((scrollY - NAV_START) / (NAV_END - NAV_START), 0), 1)
+    : 1
 
   // 导航链接
   const navLinks = [
@@ -67,15 +69,22 @@ export default function Layout({ children }) {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
       {/* 导航栏 */}
-      <nav className={`sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-opacity duration-500 ${
-        router.pathname === '/' && !showHeader ? 'opacity-0 pointer-events-none' : 'opacity-100'
-      }`}>
+      <nav 
+        className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800"
+        style={{
+          opacity: navProgress,
+          visibility: navProgress > 0 ? 'visible' : 'hidden',
+          pointerEvents: navProgress > 0 ? 'auto' : 'none',
+          transform: `translateY(${(1 - navProgress) * -20}px)`,
+          transition: 'opacity 0.3s ease-out, transform 0.3s ease-out',
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
               <span className="text-2xl font-bold text-primary-600 dark:text-primary-400">
-                个人博客
+                {/* 个人博客 */}
               </span>
             </Link>
 
